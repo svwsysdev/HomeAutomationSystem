@@ -9,8 +9,8 @@
 //======================|Setup Network Addresses|====================>>>>>>
 //------------------------------------------------------------------->>>>>>
 byte mac[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-IPAddress ip(192, 168, 88, 3);
-IPAddress server(192, 168, 88, 2);
+IPAddress ip(192, 168, 100, 255);
+IPAddress server(192, 168, 100, 255);
 int pin = 0;
 int spin = digitalRead(pin);
 int butval = 0;
