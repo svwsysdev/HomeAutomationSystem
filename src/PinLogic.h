@@ -13,5 +13,7 @@ void pinSetup() {
         digitalRead(pin);
         //Set each pin to preffered state. 
         digitalWrite(pin, HIGH);
+        //Log final pin values to the log file.
+        logger("pin_setup", "Pin: " + String(pin));
     }
 }
