@@ -8,7 +8,6 @@
         3.Add log.h library to print serial values for debug purposes.
         4.Added comment lines for Connection.h
         5.Included log.h as library in Connection.h & Home.ino
-        6. 
 ---
 **Added log.h**
 ```c++
