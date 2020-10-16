@@ -53,3 +53,108 @@ void pinSetup() {
     }
 }
 ``` 
+### Connection.h
+##### Globals:
+
+
+```c++
+#include "log.h"
+//Client mac address specified.
+byte mac[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+// Setup network address for Client & Server.
+IPAddress ip(192, 168, 0, 0);
+IPAddress server(192, 168, 0, 0);
+//Declare Ethernet & MQTT client libraries.
+EthernetClient ethClient;
+PubSubClient mqttClient(ethClient);
+```
+##### Void callback:
+
+Detailed comments.
+```c++
+//Function callback handles incoming & outgoing messages.
+void callback(char* topic, byte* payload, unsigned int length) {
+  //Declaring variables for use.
+  String content = "";
+  char character;
+  //For loop is used to read the payload in bytes.
+  for (int num = 0; num < length; num++) {
+    //The payload is converted into char variable.
+    character = payload[num];
+    //Here the variable character is converted from char to String.
+    content.concat(character);
+  }
+  //Debug messages are logged to serial.
+  logger("callback_MQTT_topic", "Topic:" + String(topic));
+  logger("callback_MQTT_payload", "Payload:" + content);
+  //The content variable is convert to an integer.
+  int pinval = content.toInt();
+  //Debug messages are logged to serial.
+  logger("callback_set_pinval", "Pin Value:" + pinval);
+  //Declare new string variable use.
+  String pinvalstr;
+  //Condition to cancel out pins that are not set.
+  if (pinval > 21 && pinval < 43) {
+    //Read state of pins.
+    int swt = digitalRead(pinval);
+    //Debug messages are logged to serial.
+    logger("callback_set_pinstate", "Pin State:" + swt);
+    //Condition checked and switch state set.
+    swt = swt > 0 ? LOW : HIGH;
+    //Condition sets pinvalstr to a unique message to return on or off value.
+    pinvalstr = swt == LOW ? content + "0" : content + "1" ;
+    //Integer declared to count pinvalstr length.
+    int str_len = pinvalstr.length() + 1;
+    //Declaring char array.
+    char char_array[str_len];
+    //Convert pinvalstr into char array.
+    pinvalstr.toCharArray(char_array, str_len);
+    //Condition to check if it is connected to server.
+    if (mqttClient.connect("anorakClient")) {
+      //Send message to MQTT server.
+      mqttClient.publish("Homeret", char_array);
+    }
+    //Set the pin number to the specific state determined above.
+    digitalWrite(pinval, swt);
+    //Debug messages are logged to serial.
+    logger("callback_final_check", "Pin Value:" + String(pinval) + "Pin State:" + swt);
+  }
+}
+```
+##### Void connector:
+```c++
+//Function connector sets up the connection to the server.
+void connector() {
+    //Server address and port specified.
+    mqttClient.setServer(server, 1883);
+    //Call library function to use callback.
+    mqttClient.setCallback(callback);
+    //Start ethernet client connection to connect to server. 
+    Ethernet.begin(mac, ip);
+}
+```
+##### Void reconnect:
+```c++
+//Function reconnect will check state of connection and reatempt if disconnected.
+void reconnect() {
+    // Loop until connected
+    while (!mqttClient.connected()) {
+        logger("reconnect", "Attempting MQTT connection.");
+        // Attempt to reconnect.
+        if (mqttClient.connect("anorakClient")) {
+            logger("reconnect_success", "Connected!");
+            // Once connected, publish a Message.
+            mqttClient.publish("Home2", "connected");
+            // Subscribe to specific topic.
+            mqttClient.subscribe("Home2");
+        }
+        else {
+            logger("reconnect_fail", "State:" + String(mqttClient.state()) + ", Reattempting connection in 5 seconds.");
+            // Wait 5 seconds before retrying
+            delay(5000);
+        }
+    }
+    mqttClient.loop();
+}
+``` 
+
