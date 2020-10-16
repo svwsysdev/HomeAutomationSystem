@@ -10,6 +10,7 @@
         5.Included log.h as library in Connection.h & Home.ino
         6.Changed Mac & IP addresses to variable values inside Connection.h
         7.Added Connection.h content to ReadMe for better explination.
+        8.Added Node-Red GUI source code as noderedGUI.json file.
 ---
 **Added log.h**
 ```c++
