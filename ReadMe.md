@@ -1,5 +1,13 @@
 ## HOME AUTOMATION README
 ---
+### How To:
+---
+**For:** Arduino Atmega2560
+
+**Flashing to Arduino:** 
+
+---
+
 ### Home.ino
 ##### Void Setup:
 The void setup is where all the setup functions are done.
