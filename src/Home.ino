@@ -5,15 +5,16 @@
 #include <Ethernet2.h>
 #include "Connection.h"
 #include "PinLogic.h"
+#include "log.h"
 
 void setup() {
-//Call connector function located in Connection.h
-connector();
-//Call pinSetup function located in PinLogic.h
-pinSetup();
+	//Call connector function located in Connection.h
+	connector();
+	//Call pinSetup function located in PinLogic.h
+	pinSetup();
 }
 
 void loop(){
-//Call checkConnect function located in Connection.h
-checkConnect();
+	//Call reconnect function located in Connection.h
+	reconnect();
 }
